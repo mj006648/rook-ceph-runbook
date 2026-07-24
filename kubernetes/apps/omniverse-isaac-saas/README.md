@@ -15,6 +15,7 @@
 | [`C_DGX_SPARK_4K_KERNEL_WEBRTC_VALIDATION_2026-07-21.md`](./C_DGX_SPARK_4K_KERNEL_WEBRTC_VALIDATION_2026-07-21.md) | C DGX Spark 64K ELF 오류의 원인, 4K NVIDIA 커널 전환, ARM64 자동 선택, hostNetwork WebRTC와 Nucleus 인증의 실제 성공 기록·rollback 절차 | C의 GB10 ARM64 E2E 결과를 확인할 때 |
 | [`SMARTX_MIGRATION_PLAN.md`](./SMARTX_MIGRATION_PLAN.md) | 실제 구현 가이드. eecs-k8s/c-k8s의 어느 파일에 어떤 코드를 넣고 왜 넣는지, 검증·rollback까지 설명 | 실제 이관 코드를 작성하거나 검토할 때 |
 | [`SCALEX_FEDERATION_SINGLE_CLUSTER_PLAN.md`](./SCALEX_FEDERATION_SINGLE_CLUSTER_PLAN.md) | `isaac-twinx` child Helm chart와 `scalex-federation` release catalog를 이용해 Karmada 경로로 TwinX 한 곳에만 Portal을 배포하는 계획 | 실제 ScaleX Federation child 구조와 단일-target 배포를 준비할 때 |
+| [`SCALEX_ISAAC_TWINX_C_DEPLOYMENT_2026-07-24.md`](./SCALEX_ISAAC_TWINX_C_DEPLOYMENT_2026-07-24.md) | `scalex-isaac-twinx` v0.2.4를 Tower Tekton/Federation/Karmada로 C에 배포하고 GB10 생성·WebRTC·Nucleus·삭제까지 검증한 실제 절차 | 같은 배포를 처음부터 재현하거나 새 버전을 promotion할 때 |
 | [`../omniverse-nucleus/TWINX_EXECUTION_2026-07-15.md`](../omniverse-nucleus/TWINX_EXECUTION_2026-07-15.md) | TwinX-Ops raw app으로 새 `omniverse` namespace에 Nucleus를 실행한 기록. 기존 `oos-sim`과 외부 Nucleus `10.38.38.32` 비변경 경계 포함 | TwinX Isaac 실행 환경의 Nucleus 경계를 확인할 때 |
 
 ## 권장 읽는 순서
@@ -29,8 +30,9 @@
 6. `TWINX_ISAAC_SIM_E2E_2026-07-15.md`
 7. C DGX Spark에서 시험할 때는 `C_DGX_SPARK_4K_KERNEL_WEBRTC_VALIDATION_2026-07-21.md`
 8. `SMARTX_MIGRATION_PLAN.md`
-9. ScaleX Federation/Karmada 경로를 사용할 때는 `SCALEX_FEDERATION_SINGLE_CLUSTER_PLAN.md`
-10. Nucleus 경계가 필요하면 `../omniverse-nucleus/TWINX_EXECUTION_2026-07-15.md`
+9. ScaleX Federation/Karmada 구조를 이해할 때는 `SCALEX_FEDERATION_SINGLE_CLUSTER_PLAN.md`
+10. 실제 C 배포를 재현할 때는 `SCALEX_ISAAC_TWINX_C_DEPLOYMENT_2026-07-24.md`
+11. Nucleus 경계가 필요하면 `../omniverse-nucleus/TWINX_EXECUTION_2026-07-15.md`
 
 ### 바로 eecs-k8s/c-k8s 이관 작업을 할 때
 
@@ -46,6 +48,7 @@
 2. `TWINX_ISAAC_SIM_E2E_2026-07-15.md`에서 Portal/Nucleus/WebRTC/Delete의 성공 기준을 확인한다.
 3. `SMARTX_MIGRATION_PLAN.md`는 eecs-k8s/cluster preset 직접 배포와의 소유권 차이를 비교할 때만 참고한다.
 4. 같은 TwinX Portal을 direct SmartX 경로와 Federation 경로가 동시에 관리하지 않도록 writer를 하나만 선택한다.
+5. 실제 node4 PipelineRun, promotion, Argo/C 검증 명령은 `SCALEX_ISAAC_TWINX_C_DEPLOYMENT_2026-07-24.md`를 그대로 따른다.
 
 ## 문서 간 중복 방지 원칙
 
@@ -90,6 +93,8 @@ C portal: isaac-twinx 0.2.2, amd64 control node에서 정상 실행
 C DGX Spark ARM64 Isaac 6.0.1: architecture 자동 선택, DRA exact GPU, hostNetwork, node IP WebRTC 검증 완료
 C DGX Spark WebRTC: 10.33.201.193, Client 2.0.0 영상/입력 사용자 확인 완료
 C Nucleus: 10.33.143.10, nucleus-cred 참조, 신규 instance 인증 status OK
+ScaleX C Portal: scalex-isaac-twinx v0.2.4, 10.33.143.11, Argo Synced/Healthy
+ScaleX C E2E: GB10 ARM64 create/WebRTC/Nucleus status OK/delete/GPU 반환 완료
 eecs-k8s/c-k8s Isaac 코드 반영: eecs 6acbd67, c main 1ac1b9d
 ```
 
