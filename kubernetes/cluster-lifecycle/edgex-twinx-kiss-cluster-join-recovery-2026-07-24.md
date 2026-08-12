@@ -7,6 +7,8 @@
 > CNI 정책: 의도적으로 미배포. 모든 Node의 `Ready=False`/`NotReady`는 예상 상태
 >
 > 선행 기록: [DataX Worker 재조인 복구 및 네트워크 안정화](datax-worker-rejoin-recovery-2026-07-24.md)
+>
+> 후속 복귀: [KISS EdgeX/TwinX/DataX 노드 default 클러스터 복귀 2026-08-12](kiss-default-cluster-return-2026-08-12.md)
 
 ## 결과 요약
 

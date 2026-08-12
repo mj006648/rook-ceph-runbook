@@ -3,6 +3,8 @@
 > 작성일: 2026-07-24
 > 상태: 두 Worker의 KISS 재조인 완료. DataX CNI는 의도적으로 배포하지 않았으며 Control Plane과 두 Worker는 `NetworkPluginNotReady` 상태이다.
 > 대상: `datax-desktop-gen12-01` / `fc1258ba-b25c-2724-d6d7-1c697ad99de0`, `datax-desktop-gen12-02` / `fe47eb1b-cf4c-f3fb-5057-1c697ad99f56`
+>
+> 후속 복귀: [KISS EdgeX/TwinX/DataX 노드 default 클러스터 복귀 2026-08-12](kiss-default-cluster-return-2026-08-12.md)
 
 ## Current status
 
