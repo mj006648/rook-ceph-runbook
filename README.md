@@ -13,6 +13,7 @@
 
 | Last update | Area | Issue / note | Contents |
 | --- | --- | --- | --- |
+| 2026-08-17 | Kubernetes / Security | [Workload Identity와 Secret 관리 학습 경로](kubernetes/security/identity-secrets/) | SPIFFE/SPIRE, OpenBao, External Secrets Operator의 개념·Kubernetes 실습·통합 설계·운영 진단·복습 문제 |
 | 2026-08-12 | Hardware / Provisioning + Kubernetes / Cluster Lifecycle | [KISS 노드 프로비저닝·클러스터 Join 한눈에 보기](hardware/provisioning/kiss-node-lifecycle-at-a-glance.md) | Box 등록·수정, PXE/Ubuntu 설치, Commissioning, Control Plane·Compute Join, 상태 판정, 주요 장애와 복구 |
 | 2026-07-24 | Kubernetes / Cluster Lifecycle | [EdgeX/TwinX KISS 클러스터 구성 및 Compute 재조인 복구](kubernetes/cluster-lifecycle/edgex-twinx-kiss-cluster-join-recovery-2026-07-24.md) | Control Plane bootstrap ConfigMap/RBAC 복구, localhost:6443 proxy seed, kubeadm CA/10250 preflight 충돌 해소, Compute 8대 조인 |
 | 2026-07-24 | Kubernetes / Cluster Lifecycle | [DataX Worker 재조인 복구 및 네트워크 안정화](kubernetes/cluster-lifecycle/datax-worker-rejoin-recovery-2026-07-24.md) | 이전 kubelet CA 백업·분리, KISS 재조인, Wi-Fi bond 불안정과 임시 유선 전환, stale CNI 정리, CNI 미배포 시 정상 판정 |
@@ -36,7 +37,7 @@
   - **[kubernetes/cluster-lifecycle/](kubernetes/cluster-lifecycle/)** — Kubernetes upgrade, Kubespray 작업, control-plane/etcd topology 변경, node 제거
   - **[kubernetes/networking/](kubernetes/networking/)** — Cilium, Hubble, MTU, Pod 통신, Kubernetes 관련 node routing
   - **[kubernetes/storage/](kubernetes/storage/)** — Rook-Ceph, OSD, PVC, LV, local disk 운영
-  - **[kubernetes/security/](kubernetes/security/)** — OpenBao, External Secrets, Kyverno, cert-manager, OIDC/RBAC, webhook lifecycle
+  - **[kubernetes/security/](kubernetes/security/)** — SPIFFE/SPIRE workload identity, OpenBao, External Secrets, Kyverno, cert-manager, OIDC/RBAC, webhook lifecycle
   - **[kubernetes/gpu/](kubernetes/gpu/)** — GPU Operator, NVIDIA DRA, MIG, GPU node 운영
   - **[kubernetes/registry/](kubernetes/registry/)** — Harbor registry, image storage, RWO PVC rollout 운영
   - **[kubernetes/virtualization/](kubernetes/virtualization/)** — KubeVirt 기반 사용자별 VM 제공 계획과 운영 절차
