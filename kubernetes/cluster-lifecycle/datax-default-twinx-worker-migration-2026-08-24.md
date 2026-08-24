@@ -5,6 +5,8 @@
 > 상태: 단일 Gen12 Compute를 `datax`에서 안전하게 분리하고 `default` 복귀를 검증한 뒤 `twinx / Compute`로 재조인 완료. 최종 Box `Running`, TwinX Node `Ready`
 >
 > 선행 기록: [KISS EdgeX/TwinX/DataX 노드 default 클러스터 복귀](kiss-default-cluster-return-2026-08-12.md), [EdgeX/TwinX KISS 클러스터 구성 및 Compute 재조인 복구](edgex-twinx-kiss-cluster-join-recovery-2026-07-24.md), [KISS Node Lifecycle 한눈에 보기](../../hardware/provisioning/kiss-node-lifecycle-at-a-glance.md)
+>
+> 후속 GPU 기록: [TwinX KISS GPU 노드 편입과 GPU Operator/DRA 복구](../gpu/twinx-kiss-gpu-node-onboarding-2026-08-24.md)
 
 ## 결과 요약
 

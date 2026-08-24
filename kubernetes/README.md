@@ -7,6 +7,7 @@ NetAI TwinX/MiniX 클러스터의 Kubernetes 기반 운영 기록을 모아둔 �
 
 | Last update | Area | Topic | Document |
 | --- | --- | --- | --- |
+| 2026-08-24 | GPU | KISS TwinX RTX 3070 노드 3대 GPU Operator/DRA 적용, VINE Greeter 비활성화, DRA CDI UVM race 진단과 복구 | [TwinX KISS GPU Node Onboarding](gpu/twinx-kiss-gpu-node-onboarding-2026-08-24.md) |
 | 2026-08-17 | Security | SPIFFE/SPIRE workload identity와 OpenBao/ESO secret 관리의 개념, 실습, 통합 설계, 운영 진단 | [Workload Identity와 Secret 관리 학습 경로](security/identity-secrets/) |
 | 2026-07-24 | Cluster lifecycle | EdgeX/TwinX Control Plane bootstrap 복구, localhost API proxy seed, kubeadm preflight 충돌 제거, Compute 8대 KISS Join | [EdgeX/TwinX KISS Cluster Join Recovery](cluster-lifecycle/edgex-twinx-kiss-cluster-join-recovery-2026-07-24.md) |
 | 2026-07-24 | Cluster lifecycle | DataX worker 이전 kubelet CA 제거, KISS 재조인, Wi-Fi bond 불안정과 유선 전환, stale CNI 정리 | [DataX Worker Rejoin Recovery](cluster-lifecycle/datax-worker-rejoin-recovery-2026-07-24.md) |
