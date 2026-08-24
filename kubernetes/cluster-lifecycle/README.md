@@ -9,6 +9,7 @@ Kubernetes 클러스터의 생애주기 작업을 모아둔다.
 
 | Last update | Target | Document | Contents |
 | --- | --- | --- | --- |
+| 2026-08-24 | DataX Gen12 Compute 1대 (`3adacb41-faad-9484-7477-1c697ad8c17d`) | [DataX Gen12 Compute의 default 경유 TwinX 재조인](datax-default-twinx-worker-migration-2026-08-24.md) | 단일 UUID cordon/drain, DataX·default rollback backup, hourly KISS reset과 reboot 순서, stale default CA/PKI/CNI 격리, CA path alias 대응, TwinX Box Running·Node Ready·인증서 검증 |
 | 2026-08-12 | EdgeX/TwinX/DataX Compute 10대 및 기존 E300 Control Plane 2대 | [KISS EdgeX/TwinX/DataX 노드 default 클러스터 복귀](kiss-default-cluster-return-2026-08-12.md) | source 인증정보를 root-only backup으로 격리하고 default kubelet/CA/CNI 복원, E300 etcd snapshot과 control-plane 비활성화, localhost/nginx proxy 인계 복구, 12대 Node Ready 검증 |
 | 2026-07-24 | EdgeX/TwinX Control Plane 및 Compute 8대 | [EdgeX/TwinX KISS 클러스터 구성 및 Compute 재조인 복구](edgex-twinx-kiss-cluster-join-recovery-2026-07-24.md) | bootstrap ConfigMap/RBAC 복구, localhost:6443 proxy seed, CA/10250 preflight 충돌 해소, CNI 미배포 상태의 Node 등록 검증 |
 | 2026-07-24 | DataX worker | [DataX Worker 재조인 복구 및 네트워크 안정화](datax-worker-rejoin-recovery-2026-07-24.md) | 이전 kubelet CA 백업·분리, KISS 재조인, Wi-Fi bond 경로 장애와 임시 유선 전환, stale Cilium/Multus 설정 정리, CNI 미배포 시 검증·rollback |
