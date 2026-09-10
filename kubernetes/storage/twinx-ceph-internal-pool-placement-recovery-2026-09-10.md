@@ -2,7 +2,7 @@
 
 > 작성일: 2026-09-10
 >
-> 상태: **원인 확인·GitOps 변경 준비·사전 검증 완료, 수동 Argo CD Sync 대기.** 실제 복구 완료 기록이 아니다.
+> 상태: **선택 Sync 2건 성공, 대상 65 PG 복구 완료. 추가 내부 풀의 32 PG가 inactive로 남아 전체 정상화는 미완료.**
 >
 > 범위: 관리·RGW 로그 풀 3개의 가용성 복구. 원본 데이터 삭제, PV/PVC 변경, 복제 수 감소는 하지 않는다.
 
@@ -12,12 +12,13 @@
 | --- | --- |
 | 환경 | Rook 1.17.6 / Ceph 19.2.2, TwinX 실험 스토리지 |
 | OSD 배치 | l40s 한 호스트, **같은 NVMe 한 개의 논리 장치 3개** |
-| 문제 | 관리·로그 풀 3개, 합계 65 PG가 `undersized+peered` / inactive |
+| 문제 | 최초 대상 65 PG는 복구됨. 추가 `default.rgw.control`의 32 PG가 inactive |
 | 원본 풀 | `trident-kci-rgw-data` 128 PG는 active+clean |
 | 메타데이터 풀 | `trident-kci-rgw-meta` 8 PG는 active+clean |
-| GitOps 준비 | 별도 수동 앱 `rook-ceph-pool-recovery` |
+| 적용 GitOps | 별도 수동 앱 `rook-ceph-pool-recovery`, 자동 Sync는 꺼진 상태 유지 |
 | 로컬 검증 | 테스트 20개, Helm, API 서버 dry-run 통과 |
-| 실제 적용 | 미실행. 적용 전 검사에서 예상대로 미복구 상태 확인 |
+| 실제 적용 | 새 Application 1개와 대상 풀 CR 3개만 선택 Sync, 두 작업 Succeeded |
+| 엄격한 사후 검증 | 추가 풀이 발견되어 실패. 예외를 무시하거나 baseline을 바꾸지 않음 |
 | 물리 장애 보호 | 이번 변경으로 추가되지 않음 |
 
 이 문서는 공개 운영 노트다. 인증값, kubeconfig, keyring, 인증서 본문, 장치 일련번호와 전체 클러스터 원시 덤프는 게시하지 않는다. 상세 내부 근거 링크는 아래에 별도로 구분했다.
@@ -49,9 +50,9 @@ kubectl -n rook-ceph exec deploy/rook-ceph-tools -- ceph osd pool ls detail --fo
 kubectl -n rook-ceph exec deploy/rook-ceph-tools -- ceph osd crush rule dump --format json
 ~~~
 
-관측한 대상:
+적용 전 관측한 대상:
 
-| 풀 | pool ID | PG 수 | size | min_size | 현재 failure domain |
+| 풀 | pool ID | PG 수 | size | min_size | 복구 전 failure domain |
 | --- | ---: | ---: | ---: | ---: | --- |
 | `.mgr` | 1 | 1 | 3 | 2 | host |
 | `default.rgw.log` | 20 | 32 | 3 | 2 | host |
@@ -163,7 +164,7 @@ Argo CD에서:
 4. diff가 대상 CephBlockPool 3개뿐인지 확인하고 일반 수동 Sync한다.
 5. Force/Replace/삭제로 재시도하지 않는다. 기존 `rook-ceph-resources` 앱을 대신 Sync하지 않는다.
 
-**현재 기록은 이 수동 Sync 이전 단계까지다.**
+**2026-09-10에 위임받은 선택 Sync를 실행했다.** Git 커밋 `48f1fc3`에 고정하고 Prune/Force 없이 요청했으며, 실제 처리된 리소스가 새 Application 1개와 대상 CephBlockPool 3개뿐인지 확인했다.
 
 ## Verification
 
@@ -185,6 +186,21 @@ python3 argocd/twinx-storage/apps/rook-ceph-pool-recovery/verify.py verify \
 
 풀 복구가 통과해도 Monitor 공간 경고 등으로 **파일럿 사전 점검은 여전히 보류될 수 있다**. 실제 성능 측정과 다른 결과를 구분한다.
 
+### 2026-09-10 실제 실행 결과
+
+| 풀 | ID | size / min_size | 적용 후 상태 |
+| --- | ---: | --- | --- |
+| `.mgr` | 1 | 3 / 2 | 1 PG active+clean, osd 규칙 |
+| `default.rgw.log` | 20 | 3 / 2 | 32 PG active+clean, osd 규칙 |
+| `trident-kci-store.rgw.log` | 31 | 3 / 2 | 32 PG active+clean, osd 규칙 |
+| `default.rgw.control` — 추가 발견 | 32 | 3 / 2 | 32 PG undersized+peered/inactive, host 규칙 |
+
+대상 3개의 pool ID·복제 설정·PG 수와 기존 비대상 풀의 비교 대상 설정은 유지됐다. 하지만 적용 전에는 없었던 `default.rgw.control` 풀이 나타나 엄격한 사후 검증은 실패했다. **Argo Sync 성공, 대상 PG 복구, 클러스터 전체 정상화는 서로 다른 결과**다.
+
+추가 풀은 요청한 Argo 리소스에 없었다. Toolbox에는 17~19일째 남아 있는 RGW 관리 프로세스 8개가 있었고, 6개가 명시적 zone 없이 실행 중이었다. 기존 관리 요청이 log 풀 복구 뒤 default-zone 초기화를 이어갔을 가능성이 있지만, 생성 주체를 감사 로그로 확정한 것은 아니다.
+
+추가 풀이나 기존 프로세스를 임의로 삭제·종료하지 않았다. 소유자·용도를 확인하고 후속 범위를 정하기 전에는 복구 대상 풀을 계속 추가하거나 global CRUSH 기본값을 바꾸지 않는다. 원본 데이터·PV/PVC·MinIO는 변경하지 않았으며 파일럿 성능 부하도 재개하지 않았다.
+
 ## Prevention
 
 - OSD 개수뿐 아니라 실제 장치·호스트의 독립성을 확인한다.
@@ -198,7 +214,7 @@ python3 argocd/twinx-storage/apps/rook-ceph-pool-recovery/verify.py verify \
 - **같은 NVMe/호스트 장애에 대한 보호는 추가되지 않는다.**
 - `Prune=false,Delete=false`는 Argo 경로의 보호다. 직접 `kubectl delete`로 풀 CR을 삭제하면 Rook이 기존 Ceph 풀까지 삭제할 수 있다. **CR 삭제를 rollback으로 사용하지 않는다.**
 - 정상화되지 않는 경우 CR/PG 상태와 Operator 오류를 수집하고 같은 대상 범위의 전진 수정안을 검토한다. 데이터를 지우거나 복제 수를 낮춰 성공처럼 보이게 하지 않는다.
-- 실제 Sync·PG 복구·파일럿 재개는 아직 검증 전이다.
+- 요청한 Sync와 대상 65 PG 복구는 검증했지만, 추가 내부 풀과 Monitor 경고가 남아 전체 정상화·파일럿 재개는 미완료다.
 
 ## 참고
 
@@ -212,5 +228,7 @@ python3 argocd/twinx-storage/apps/rook-ceph-pool-recovery/verify.py verify \
 
 - [TwinX GitOps 복구 변경 및 런북](https://github.com/SmartX-Team/TwinX-Ops/tree/48f1fc3cda31af802cefa0b37425b88f7424c65f/argocd/twinx-storage/apps/rook-ceph-pool-recovery)
 - [Trident 실험 저장소의 준비·검증 기록](https://github.com/mj006648/Trident-Lakehouse-Experiments/blob/bf0ee141c87eaa79457563e3c7d95409ee1668e5/experiments/operations-v3/results/summary/ceph-pool-recovery-preparation-20260910.md)
+
+- [실제 선택 Sync 결과와 남은 예외 — 내부 권한 필요](https://github.com/mj006648/Trident-Lakehouse-Experiments/blob/main/experiments/operations-v3/results/summary/ceph-pool-recovery-result-2026-09-10.md)
 
 기존의 [Rook-Ceph 재설치 절차](rook-ceph-reinstall.md)나 [LV 준비 절차](lv-preparation.md)는 이번 복구 경로가 아니다. 재설치·LV 재구성으로 이 문제를 해결하려 하지 않는다.
